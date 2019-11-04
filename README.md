@@ -101,7 +101,7 @@ boolean flags accepting `true` or `false`.
 "flags" : {
     "qualifications" : "false",
     "office_address" : "true",
-    "ad_sync" : true,
+    "ad_sync" : "true",
     "exclaimer" : "true"
 }
 ```
