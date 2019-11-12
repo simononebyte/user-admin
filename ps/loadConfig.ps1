@@ -1,17 +1,11 @@
-[CmdletBinding()]
-param (
-    [Parameter(Mandatory=$true,
-               Position=0,
-               ValueFromPipeline=$true,
-               ValueFromPipelineByPropertyName=$true,
-               HelpMessage="Path to config file.")]
-    [ValidateNotNullOrEmpty()]
-    [string]
-    $ConfigFile
-)
+# File to be dot sourced by main scripts
+# Load config from JSON
 
-if (Test-Path $ConfigFile) {
-    $config = Get-Content -Path $ConfigFile | ConvertFrom-JSON
+function loadConfig($Path) {
+
+    if (Test-Path $Path) {
+        $config = Get-Content -Path $Path | ConvertFrom-JSON
+    }
+
+    $config
 }
-
-$config

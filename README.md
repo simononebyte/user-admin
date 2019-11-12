@@ -86,6 +86,16 @@ already in use by another account.
 "username_fallback" : "f2last"
 ```
 
+## Email Domain
+
+What email domain is to be used.
+
+### Email Domain - Example
+
+```json
+"email_domain": "onebyte.net"
+```
+
 ## Feature Flags
 
 Different companies use differing levels of information in the environments.

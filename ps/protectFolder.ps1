@@ -1,17 +1,10 @@
 # File to be dot sourced by main scripts
 # Protects a folder from accidental move, delete or rename
 
-[CmdletBinding(SupportsShouldProcess = $False)]
-Param(
-    [Parameter(
-        Mandatory = $True,
-        Position = 0
-    )]
-    [ValidateLength(1, 256)]
-    [String]$Folder
-)
+function protectFolder([string]$Folder) {
 
-$ACL = @("Delete", "DeleteSubdirectoriesAndFiles")
+    $ACL = @("Delete", "DeleteSubdirectoriesAndFiles")
 
-Write-Verbose "Protecting folder: $Folder"
-Set-Permission $Folder -UserOrGroup "Authenticated Users" -AclRightsToAssign $ACL -AccessControlType "Deny" -InheritedFolderPermissions "None"
+    Write-Verbose "Protecting folder: $Folder"
+    Set-Permission $Folder -UserOrGroup "Authenticated Users" -AclRightsToAssign $ACL -AccessControlType "Deny" -InheritedFolderPermissions "None"
+}

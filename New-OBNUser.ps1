@@ -25,16 +25,53 @@ Param(
     ValueFromPipelineByPropertyName = $True
   )]
   [ValidateLength(1, 256)]
-  [String[]]$Param1,
+  [String]$First,
+
+  [Parameter(
+    Mandatory = $True,
+    Position = 1,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 256)]
+  [String]$Last,
 
   [Parameter(
     Mandatory = $False,
-    Position = 1,
-    ValueFromPipeline = $False,
-    ValueFromPipelineByPropertyName = $False
+    Position = 2,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
   )]
   [ValidateLength(1, 256)]
-  [String[]]$Param2 = "Empty"
+  [String]$Quals,
+
+  [Parameter(
+    Mandatory = $false,
+    Position = 3,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [int]$RDPServer = -1,
+
+  [Parameter(
+    Mandatory = $false,
+    Position = 4,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 256)]
+  [String[]]$UserName,
+
+  [Parameter(
+    Mandatory = $false,
+    Position = 99,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 256)]
+  # [String]$ConfigPath="C:\ProgramData\Onebyte\config.json"
+  [String]$ConfigPath=".\config.json"
+
 )
 
 BEGIN {
@@ -45,21 +82,21 @@ BEGIN {
 
   # Declare any classes used later in the sript
   # #########################################################################
-  Class MyClass {
-    [string]$Field1
+  # Class MyClass {
+  #   [string]$Field1
 
-    [int]$Field2
+  #   [int]$Field2
 
-    [ValidateSet("Opt1", "Opt2", "Opt3")]
-    [string]$Field3
+  #   [ValidateSet("Opt1", "Opt2", "Opt3")]
+  #   [string]$Field3
 
-    # Constructor
-    ProfileFolder($Field1, $Field2, $Field3) {
-      $this.$Field1 = $Field1
-      $this.$Field2 = $Field2
-      $this.$Field3 = $Field3
-    }
-  }
+  #   # Constructor
+  #   ProfileFolder($Field1, $Field2, $Field3) {
+  #     $this.$Field1 = $Field1
+  #     $this.$Field2 = $Field2
+  #     $this.$Field3 = $Field3
+  #   }
+  # }
 
   # Declare any supporting functions here
   # #########################################################################
@@ -68,24 +105,28 @@ BEGIN {
   Get-ChildItem -Path $Path -Filter *.ps1 | ForEach-Object {
       . $_.FullName
   }
-  function myFunc([string]$p) {
-    Write-Host "myFunc called with"
-  }
+ 
+  $config = loadConfig -Path $ConfigPath
 }
 
 
 Process {
   # Place all script elements within the process block to allow processing of
   # pipeline correctly.
-    
-  # The process block can be executed multiple times as objects are passed through the pipeline into it.
-  ForEach ($item In $Param1) {
-    Write-Verbose "Processing -Param1:$item"
 
-    upsertFolder "$dstRoot\$profile"
+  $displayName = "$first $Last"
+  $username = formatUsername -First $First -Last $Last -Format $config.username_format
 
-    Write-Verbose "Complete   -Param1:$item"
-  }
+  Write-Host "Creating a new account with the following details"
+  Write-Host
+  Write-Host "First name    : $First"
+  Write-Host "Last name     : $Last"
+  Write-Host "Display Name  : $displayName"
+  Write-Host "Email Address : $username"
+
+
+
+
 }
 
 END {       
