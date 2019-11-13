@@ -144,6 +144,20 @@ Process {
   Write-Host "User lgoin       : $uid" 
   Write-Host "Email Address    : $emailAddress"
   Write-Host "RDP Server Group : $rdp"
+  
+  $title = "User folders     :"
+  foreach ($folder in $config.UserFolders) {
+    $path = $folder.Path
+    if ($path -match "\\$") {
+      $path = "$($path)$($uid)"
+    } else {
+      $path = "$($path)\\$($uid)"
+    }
+    Write-Host "$title $path"
+    $title = "                 :"
+  }
+
+
 }
 
 END {       
