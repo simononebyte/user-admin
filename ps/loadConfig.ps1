@@ -8,6 +8,7 @@
 #>
 function loadConfig($Path) {
 
+    Write-Verbose "Loading config from $Path"
     if (Test-Path $Path) {
         $config = Get-Content -Path $Path | ConvertFrom-JSON
     }

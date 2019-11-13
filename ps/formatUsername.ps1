@@ -1,7 +1,7 @@
 # File to be dot sourced by main scripts
 # Taks the users names and returns the username as indicated by the format
 
-function formatUsername($First, $Last, $Format) {
+function formatUsername([string]$First, [string]$Last, [string]$Format) {
 
     Write-Verbose "Generating user name for : $First $Last"
 

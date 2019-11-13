@@ -121,16 +121,29 @@ Process {
   # pipeline correctly.
 
   $displayName = "$first $Last"
-  $username = formatUsername -First $First -Last $Last -Format $config.UsernameFormat
-  $emailAddress = "$username@$($config.EmailDomain)"
+  if ($Quals) {
+    $displayName = "$displayname $Quals"
+  }
+  
+  $uid = formatUsername -First $First -Last $Last -Format $config.UsernameFormat
+  if ($UserName) {
+    $uid = $UserName
+  }
+  $emailAddress = "$uid@$($config.EmailDomain)"
+
+  $rdp = "Not Set"
+  if ($RDPServer -ne -1) {
+    $rdp = "RDESKTOP0$($RDPServer) User"
+  }
 
   Write-Host "Creating a new account with the following details"
   Write-Host
-  Write-Host "First name    : $First"
-  Write-Host "Last name     : $Last"
-  Write-Host "Display Name  : $displayName"
-  Write-Host "Email Address : $emailAddress"
-
+  Write-Host "First name       : $First"
+  Write-Host "Last name        : $Last"
+  Write-Host "Display Name     : $displayName"
+  Write-Host "User lgoin       : $uid" 
+  Write-Host "Email Address    : $emailAddress"
+  Write-Host "RDP Server Group : $rdp"
 }
 
 END {       
