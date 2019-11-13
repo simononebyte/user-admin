@@ -107,6 +107,12 @@ BEGIN {
   }
  
   $config = loadConfig -Path $ConfigPath
+  if ($config.RequireElevated -eq $true) {
+    if (-not (isElevated) ) {
+      Write-Error "elevated session required"
+      Exit
+    }
+  }
 }
 
 
