@@ -115,17 +115,15 @@ Process {
   # pipeline correctly.
 
   $displayName = "$first $Last"
-  $username = formatUsername -First $First -Last $Last -Format $config.username_format
+  $username = formatUsername -First $First -Last $Last -Format $config.UsernameFormat
+  $emailAddress = "$username@$($config.EmailDomain)"
 
   Write-Host "Creating a new account with the following details"
   Write-Host
   Write-Host "First name    : $First"
   Write-Host "Last name     : $Last"
   Write-Host "Display Name  : $displayName"
-  Write-Host "Email Address : $username"
-
-
-
+  Write-Host "Email Address : $emailAddress"
 
 }
 
