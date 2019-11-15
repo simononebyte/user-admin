@@ -64,13 +64,21 @@ Param(
 
   [Parameter(
     Mandatory = $false,
+    Position = 98,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [switch]$Local,
+
+  [Parameter(
+    Mandatory = $false,
     Position = 99,
     ValueFromPipeline = $True,
     ValueFromPipelineByPropertyName = $True
   )]
   [ValidateLength(1, 256)]
   # [String]$ConfigPath="C:\ProgramData\Onebyte\config.json"
-  [String]$ConfigPath=".\config.json"
+  [String]$ConfigPath = ".\config.json"
 
 )
 
@@ -103,7 +111,7 @@ BEGIN {
   # Dot source all necessary scripts
   $Path = ".\ps\"
   Get-ChildItem -Path $Path -Filter *.ps1 | ForEach-Object {
-      . $_.FullName
+    . $_.FullName
   }
  
   $config = loadConfig -Path $ConfigPath
@@ -129,6 +137,7 @@ Process {
   if ($UserName) {
     $uid = $UserName
   }
+  $uid2 = formatUsername -First $First -Last $Last -Format $config.UsernameFallback
   $emailAddress = "$uid@$($config.EmailDomain)"
 
   $rdp = "Not Set"
@@ -150,13 +159,70 @@ Process {
     $path = $folder.Path
     if ($path -match "\\$") {
       $path = "$($path)$($uid)"
-    } else {
+    }
+    else {
       $path = "$($path)\\$($uid)"
     }
     Write-Host "$title $path"
     $title = "                 :"
   }
 
+  Write-Host
+  $prompt = Read-Host "Please confirm this is correct? (Y)"
+  if ($prompt -notmatch "y") {
+    Exit
+  }
+
+  Write-Host "Create user"
+  if ($Local) {
+    $userObj = New-LocalUser -Name $uid -FullName "$First $Last" -NoPassword -AccountNeverExpires -ErrorVariable userErr -ErrorAction SilentlyContinue
+  }
+  else {
+    # TODO implement New-ADUser
+    Write-Error "addUser domain account not implemented yet"
+    exit
+  }
+  
+  if ($userErr -and $userErr[0].CategoryInfo.Reason -eq "UserExistsException") {
+    Write-Host
+    Write-Host "The account '$uid' already exists."
+    $p = Read-Host "Do you want to (u)se this account or (c)reate '$uid2' or (e)xit? (u/c/E)"
+    if ($p -match "e" -or $p -eq "") {
+      Write-Host "Exiting script"
+      Exit
+
+    }
+    elseif ($p -match "u") {
+      $userObj = Get-LocalUser -Name $uid
+    }
+    else {
+      if ($Local) {
+        $userObj = New-LocalUser -Name $uid2 -FullName "$First $Last" -NoPassword -AccountNeverExpires -ErrorVariable userErr -ErrorAction SilentlyContinue
+      }
+      else {
+        # TODO implement New-ADUser
+        Write-Error "addUser domain account not implemented yet"
+        exit
+      }
+      if ($userErr -and $userErr[0].CategoryInfo.Reason -eq "UserExistsException") {
+        Write-Host
+        Write-Host "The account '$uid2' already exists."
+        $p = Read-Host "Do you want to (u)se this account or (e)xit? (u/E)"
+        if ($p -match "e" -or $p -eq "") {
+          Write-Host "Exiting script"
+          Exit
+    
+        }
+        elseif ($p -match "u") {
+          $userObj = Get-LocalUser -Name $uid2
+        }   
+      }
+    }
+    Write-Host "User created"
+    Write-Host $userObj
+    
+
+  }
 
 }
 
