@@ -60,14 +60,23 @@ Param(
     ValueFromPipelineByPropertyName = $True
   )]
   [ValidateLength(1, 256)]
-  [String[]]$UserName,
+  [String]$UserName,
+  
+  [Parameter(
+    Mandatory = $false,
+    Position = 5,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 3)]
+  [String]$OfficeCode,
 
   [Parameter(
     Mandatory = $false,
     Position = 98,
     ValueFromPipeline = $True,
     ValueFromPipelineByPropertyName = $True
-  )]
+  )]  
   [switch]$Local,
 
   [Parameter(
@@ -150,6 +159,16 @@ Process {
     $RDP = "RDESKTOP0$($RDPServer) User"
   }
 
+  $OfficeName = "N/A - Local Account"
+  if (-not $Local) {
+    $Office = checkOfficeCode -officeCode $OfficeCode -config $config
+    $OfficeName = $Office.Name
+    if (-not $Office) {
+      Write-Error "Unable to find that Office"
+      exit
+    }
+  }
+
   Write-Host "Creating a new account with the following details"
   Write-Host
   Write-Host "First name       : $First"
@@ -158,6 +177,8 @@ Process {
   Write-Host "User lgoin       : $UID" 
   Write-Host "Email Address    : $EmailAddress"
   Write-Host "Org Unit         : $OU"
+  Write-Host "Office Name      : $OfficeName"
+  Write-Host
     Write-Host "RDP Server Group : $RDP"
   
   $title = "User folders     :"
@@ -192,6 +213,9 @@ Process {
     Write-Error "User account not created"
   }
 
+  if (-not $Local -and $OfficeCode) {
+    setOffice -uid $UID -Office $Office
+  }
 }
 
 END {       
