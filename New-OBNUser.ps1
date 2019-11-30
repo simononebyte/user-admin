@@ -128,40 +128,46 @@ Process {
   # Place all script elements within the process block to allow processing of
   # pipeline correctly.
 
-  $displayName = "$first $Last"
+  $DisplayName = "$First $Last"
   if ($Quals) {
-    $displayName = "$displayname $Quals"
+    $DisplayName = "$DisplayName $Quals"
   }
   
-  $uid = formatUsername -First $First -Last $Last -Format $config.UsernameFormat
+  $UID = formatUsername -First $First -Last $Last -Format $config.UsernameFormat
   if ($UserName) {
-    $uid = $UserName
+    $UID = $UserName
   }
-  $uid2 = formatUsername -First $First -Last $Last -Format $config.UsernameFallback
-  $emailAddress = "$uid@$($config.EmailDomain)"
+  $UID2 = formatUsername -First $First -Last $Last -Format $config.UsernameFallback
+  $EmailAddress = "$UID@$($config.EmailDomain)"
 
-  $rdp = "Not Set"
+  $OU = $config.OrgUnit
+  if ($Local) {
+    $OU = "N/A - Local account"
+  }
+
+  $RDP = "Not Set"
   if ($RDPServer -ne -1) {
-    $rdp = "RDESKTOP0$($RDPServer) User"
+    $RDP = "RDESKTOP0$($RDPServer) User"
   }
 
   Write-Host "Creating a new account with the following details"
   Write-Host
   Write-Host "First name       : $First"
   Write-Host "Last name        : $Last"
-  Write-Host "Display Name     : $displayName"
-  Write-Host "User lgoin       : $uid" 
-  Write-Host "Email Address    : $emailAddress"
-  Write-Host "RDP Server Group : $rdp"
+  Write-Host "Display Name     : $DisplayName"
+  Write-Host "User lgoin       : $UID" 
+  Write-Host "Email Address    : $EmailAddress"
+  Write-Host "Org Unit         : $OU"
+    Write-Host "RDP Server Group : $RDP"
   
   $title = "User folders     :"
   foreach ($folder in $config.UserFolders) {
     $path = $folder.Path
     if ($path -match "\\$") {
-      $path = "$($path)$($uid)"
+      $path = "$($path)$($UID)"
     }
     else {
-      $path = "$($path)\\$($uid)"
+      $path = "$($path)\\$($UID)"
     }
     Write-Host "$title $path"
     $title = "                 :"
@@ -175,53 +181,15 @@ Process {
 
   Write-Host "Create user"
   if ($Local) {
-    $userObj = New-LocalUser -Name $uid -FullName "$First $Last" -NoPassword -AccountNeverExpires -ErrorVariable userErr -ErrorAction SilentlyContinue
+    $userObj = newLocalUser -uid $UID -display $DisplayName -uid2 $UID2
   }
   else {
-    # TODO implement New-ADUser
-    Write-Error "addUser domain account not implemented yet"
-    exit
+    $userObj = newADUser -uid $UID -first $First -last $Lasty -display $DisplayName -ou $OU -uid2 $UID2
   }
   
-  if ($userErr -and $userErr[0].CategoryInfo.Reason -eq "UserExistsException") {
-    Write-Host
-    Write-Host "The account '$uid' already exists."
-    $p = Read-Host "Do you want to (u)se this account or (c)reate '$uid2' or (e)xit? (u/c/E)"
-    if ($p -match "e" -or $p -eq "") {
-      Write-Host "Exiting script"
-      Exit
-
-    }
-    elseif ($p -match "u") {
-      $userObj = Get-LocalUser -Name $uid
-    }
-    else {
-      if ($Local) {
-        $userObj = New-LocalUser -Name $uid2 -FullName "$First $Last" -NoPassword -AccountNeverExpires -ErrorVariable userErr -ErrorAction SilentlyContinue
-      }
-      else {
-        # TODO implement New-ADUser
-        Write-Error "addUser domain account not implemented yet"
-        exit
-      }
-      if ($userErr -and $userErr[0].CategoryInfo.Reason -eq "UserExistsException") {
-        Write-Host
-        Write-Host "The account '$uid2' already exists."
-        $p = Read-Host "Do you want to (u)se this account or (e)xit? (u/E)"
-        if ($p -match "e" -or $p -eq "") {
-          Write-Host "Exiting script"
-          Exit
-    
-        }
-        elseif ($p -match "u") {
-          $userObj = Get-LocalUser -Name $uid2
-        }   
-      }
-    }
-    Write-Host "User created"
-    Write-Host $userObj
-    
-
+  # Not sure this is needed but there as a belt and braces check
+  if (-not $userObj) {
+    Write-Error "User account not created"
   }
 
 }

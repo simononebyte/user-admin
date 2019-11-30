@@ -1,15 +1,15 @@
 # user-admin
 
- A collection of scripts to automate various user administration task
+A collection of scripts to automate various user administration task
 
 ## Top Level Steps
 
 These are the high level steps required for creating a new user. I will break
 these down into smaller, more targeted scripts.
 
- 1. Load config
- 2. Depending on host check if run as admin
- 3. Confirm user details
+1.  Load config
+2.  Depending on host check if run as admin
+3.  Confirm user details
     - First & Last NAme
     - Email (if different from auto-generated one)
     - Office
@@ -18,15 +18,15 @@ these down into smaller, more targeted scripts.
     - Qualifications
     - Remote desktop server
     - Groups (See note 1)
- 4. Pre-flight check to ensure there are no clashes. Fail if found.
+4.  Pre-flight check to ensure there are no clashes. Fail if found.
     - Does user exist?
     - Do home folders exist?
     - Does email address exist?
- 5. Create the domain account
- 6. Update the office information (User existing set-office script)
- 7. Update display name to append qualifications
- 8. Create user folders and set correct permissions
- 9. Add to mandatory groups
+5.  Create the domain account
+6.  Update the office information (User existing set-office script)
+7.  Update display name to append qualifications
+8.  Create user folders and set correct permissions
+9.  Add to mandatory groups
 10. Add to remote desktop group
 11. Generate and set the password
 12. Run AD Sync to get account registered on Office 365
@@ -47,8 +47,8 @@ This settings will cause the script to check for an elevated session. This is
 required when running the scripts on a domain controller or other device that
 has Azure AD Sync installed. In most other situations elevation is not needed.
 
-| Setting          | Description |
-| ---------------- | ----------- |
+| Setting         | Description                                        |
+| --------------- | -------------------------------------------------- |
 | RequireElevated | If true the script will halt unless it is elevated |
 
 ### Require Elevated - Example
@@ -62,9 +62,9 @@ has Azure AD Sync installed. In most other situations elevation is not needed.
 Each company has a preferred format for their user names. This controls the
 preferred format and also the fallback format in the case of a clash.
 
-| Setting           | Description |
-| ----------------- | ----------- |
-| UsernameFormat   | The preferred format  |
+| Setting          | Description                              |
+| ---------------- | ---------------------------------------- |
+| UsernameFormat   | The preferred format                     |
 | UsernameFallback | The format to use in the case of a clash |
 
 **UsernameFormat:** The format is based on how much of the first and/or
@@ -96,17 +96,27 @@ What email domain is to be used.
 "EmailDomain": "onebyte.net"
 ```
 
+## Organisational Unit
+
+The Active Directory OU where the new user object will be created.
+
+### Organisational Unit - Example
+
+```json
+"OrgUnit": "ou=Staff, ou=Company, dc=onebyte, dc=net"
+```
+
 ## Feature Flags
 
 Different companies use differing levels of information in the environments.
 These flags turn various functionality on or off as required. These are all
 boolean flags accepting `true` or `false`.
 
-| Flag           | Description |
-| -------------- | ----------- |
-| qualifications | Appends professional qualifications to the display name |
-| office_address | Add predefined office address details to the account |
-| ad_sync        | Should an AD Sync request be submitted |
+| Flag           | Description                                              |
+| -------------- | -------------------------------------------------------- |
+| qualifications | Appends professional qualifications to the display name  |
+| office_address | Add predefined office address details to the account     |
+| ad_sync        | Should an AD Sync request be submitted                   |
 | exclaimer      | If Exclaimer Signature is used then prompt in next steps |
 
 ### Feature Flags - Example
@@ -125,15 +135,15 @@ boolean flags accepting `true` or `false`.
 When creating a user it may be required to produce one or more folders in
 various locations.
 
-| Setting         | Description |
-| --------------- | ----------- |
-| display_name    | Displayed by the script when creating the folder |
-| path            | PAth to create the folder in |
-| protect         | Protect the folder from accidental deletion |
+| Setting         | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| display_name    | Displayed by the script when creating the folder      |
+| path            | PAth to create the folder in                          |
+| protect         | Protect the folder from accidental deletion           |
 | admin_groups    | A list of groups to grant admin access to this folder |
-| profile_version | If this is a profile folder which version to create |
+| profile_version | If this is a profile folder which version to create   |
 
-**Paths:**  When a folder is created, the username of the account being created is used.
+**Paths:** When a folder is created, the username of the account being created is used.
 So if the username is just the first name, e.g. Simon then the folder created
 will be `\\server\share\simon`. To keep things neat, the path will be
 converted to lower case.
@@ -179,14 +189,14 @@ Full details of these versions can be found [here](https://support.microsoft.com
 If the company uses peoples office address on their accounts then the
 acceptable values are listed here.
 
-| Setting    | Description |
-| ---------- | ----------- |
-| short_code | 2 letter code to select the office by |
-| name       | The name of the office |
-| phone      | The phone number for the office |
+| Setting    | Description                                         |
+| ---------- | --------------------------------------------------- |
+| short_code | 2 letter code to select the office by               |
+| name       | The name of the office                              |
+| phone      | The phone number for the office                     |
 | street     | The address of the office, except city and postcode |
-| city       | The town or  city |
-| postcode   | The postcode |
+| city       | The town or city                                    |
+| postcode   | The postcode                                        |
 
 ### Offices - Example
 
