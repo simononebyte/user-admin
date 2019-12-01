@@ -147,7 +147,9 @@ Process {
     $UID = $UserName
   }
   $UID2 = formatUsername -First $First -Last $Last -Format $config.UsernameFallback
-  $EmailAddress = "$UID@$($config.EmailDomain)"
+
+  $EmailDomain = $config.EmailDomain
+  $EmailAddress = "$UID@$EmailDomain"
 
   $OU = $config.OrgUnit
   if ($Local) {
@@ -178,8 +180,7 @@ Process {
   Write-Host "Email Address    : $EmailAddress"
   Write-Host "Org Unit         : $OU"
   Write-Host "Office Name      : $OfficeName"
-  Write-Host
-    Write-Host "RDP Server Group : $RDP"
+  Write-Host "RDP Server Group : $RDP"
   
   $title = "User folders     :"
   foreach ($folder in $config.UserFolders) {
@@ -205,16 +206,17 @@ Process {
     $userObj = newLocalUser -uid $UID -display $DisplayName -uid2 $UID2
   }
   else {
-    $userObj = newADUser -uid $UID -first $First -last $Lasty -display $DisplayName -ou $OU -uid2 $UID2
+  $userObj = newADUser -uid $UID -first $First -last $Last -display "$DisplayName" -emailDomain $EmailDomain -ou $OU -uid2 $UID2
   }
   
   # Not sure this is needed but there as a belt and braces check
-  if (-not $userObj) {
+  if ($null -eq $userObj) {
     Write-Error "User account not created"
+    exit
   }
 
   if (-not $Local -and $OfficeCode) {
-    setOffice -uid $UID -Office $Office
+    setOffice -adUser $userObj $UID -Office $Office
   }
 }
 

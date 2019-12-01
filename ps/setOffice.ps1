@@ -1,10 +1,9 @@
 # File to be dot sourced by main scripts
 # Sets office name and address details using presets
 
-function setOffice([string]$uid, [Office]$office) {
+function setOffice($adUser, [Office]$office) {
 
     # Setting Office information
-    $adUser = Get-AdUser $uid
     if ($adUser) {
         $adUser | Set-AdUser -Office $($office.Name)
         $adUser | Set-AdUser -OfficePhone $($office.Phone)
