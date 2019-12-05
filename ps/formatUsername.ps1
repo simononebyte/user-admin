@@ -12,7 +12,8 @@ function formatUsername([string]$First, [string]$Last, [string]$Format) {
         # Matches 'first' at the beginning of the format string.
         $p1 = $First
 
-    } elseif ($Format -match "first$") {
+    }
+    elseif ($Format -match "first$") {
         # Matches 'first' at the end of the format string.
         $p2 = $First
     }
@@ -21,7 +22,8 @@ function formatUsername([string]$First, [string]$Last, [string]$Format) {
     if ($Format -match "^last") {
         $p1 = $Last
 
-    } elseif ($Format -match "last$") {
+    }
+    elseif ($Format -match "last$") {
         # Matches 'last' at the end of the format string.
         $p2 = $Last
     }
@@ -32,7 +34,8 @@ function formatUsername([string]$First, [string]$Last, [string]$Format) {
         $len = [int]$matches[0].Substring(1)
         $p1 = $First.Substring(0, $len)
 
-    } elseif ($Format -match "f[0-9]+$" ) {
+    }
+    elseif ($Format -match "f[0-9]+$" ) {
         # Matches 'f' followed by a number at the end of the format string.
         $len = [int]$matches[0].Substring(1)
         $p2 = $First.Substring(0, $len)
@@ -43,7 +46,8 @@ function formatUsername([string]$First, [string]$Last, [string]$Format) {
         $len = [int]$matches[0].Substring(1)
         $p1 = $Last.Substring(0, $len)
 
-    } elseif ($Format -match "l[0-9]+$") {
+    }
+    elseif ($Format -match "l[0-9]+$") {
         # Matches 'l' followed by a number at the end of the format string.
         $len = [int]$matches[0].Substring(1)
         $p2 = $Last.Substring(0, $len)
