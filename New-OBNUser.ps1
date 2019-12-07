@@ -201,6 +201,9 @@ Process {
     else {
       $path = "$($path)\\$($UID)"
     }
+    if ($folder.ProfileVersion -like "V*") {
+      $path += ".$($folder.ProfileVersion)"
+  }
     Write-Host "$title $path"
     $title = "                 :"
   }
@@ -231,6 +234,10 @@ Process {
 
   if (-not $Local -and $OfficeCode) {
     setOffice -adUser $userObj -Office $Office
+  }
+
+  if ($config.UserFolders.Length -gt 0) {
+    createUserFolders -adUser $userObj -config $config
   }
 }
 
