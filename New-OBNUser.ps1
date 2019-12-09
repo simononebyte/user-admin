@@ -70,6 +70,15 @@ Param(
   )]
   [ValidateLength(1, 3)]
   [String]$OfficeCode,
+  
+  [Parameter(
+    Mandatory = $false,
+    Position = 6,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 256)]
+  [String]$JobTitle,
 
   [Parameter(
     Mandatory = $false,
@@ -176,6 +185,7 @@ Process {
   Write-Host "First name       : $First"
   Write-Host "Last name        : $Last"
   Write-Host "Display Name     : $DisplayName"
+  Write-Host "Job Title        : $JobTitle"
   Write-Host "User lgoin       : $UID" 
   Write-Host "Email Address    : $EmailAddress"
   Write-Host "Org Unit         : $OU"
@@ -191,6 +201,9 @@ Process {
     else {
       $path = "$($path)\\$($UID)"
     }
+    if ($folder.ProfileVersion -like "V*") {
+      $path += ".$($folder.ProfileVersion)"
+  }
     Write-Host "$title $path"
     $title = "                 :"
   }
@@ -215,8 +228,16 @@ Process {
     exit
   }
 
+  if (-not $Local) {
+    setJobTitle -adUser $userObj -title $JobTitle
+  }
+
   if (-not $Local -and $OfficeCode) {
-    setOffice -adUser $userObj $UID -Office $Office
+    setOffice -adUser $userObj -Office $Office
+  }
+
+  if ($config.UserFolders.Length -gt 0) {
+    createUserFolders -adUser $userObj -config $config
   }
 }
 

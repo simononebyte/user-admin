@@ -10,11 +10,11 @@ function setFolderReadWrite([string]$Folder, [string[]]$Users) {
     if ($Users -is [System.Array]) {
         foreach ($user in $Users) {
             Write-Verbose "Adding: $user"
-            setPermission $Folder -UserOrGroup $user -AclRightsToAssign $ACL
+            setPermission -StartingDir $Folder -UserOrGroup $user -AclRightsToAssign $ACL
         }
     }
     else {
         Write-Verbose "Adding: $Users"
-        setPermission $Folder -UserOrGroup $Users -AclRightsToAssign $ACL
+        setPermission -StartingDir $Folder -UserOrGroup $Users -AclRightsToAssign $ACL
     }
 }
