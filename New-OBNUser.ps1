@@ -185,9 +185,15 @@ Process {
   Write-Host "Create user $UID $UID2"
   if ($Local) {
     $userObj = newLocalUser -uid $UID -display $DisplayName -uid2 $UID2
+    if ($userObj.Name -ne $UID) {
+      $UID = $userObj.Name
+    }
   }
   else {
-  $userObj = newADUser -uid $UID -first $First -last $Last -display "$DisplayName" -emailDomain $EmailDomain -ou $OU -uid2 $UID2
+    $userObj = newADUser -uid $UID -first $First -last $Last -display "$DisplayName" -emailDomain $EmailDomain -ou $OU -uid2 $UID2
+    if ($userObj.SamAccountName -ne $UID) {
+      $UID = $userObj.Name
+    }
   }
   
   # Not sure this is needed but there as a belt and braces check

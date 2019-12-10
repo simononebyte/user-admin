@@ -8,13 +8,10 @@ function newADUser([string]$uid, [string]$first, [string]$last, [string]$display
   $name = "$first $last"
   $emailUPN = "$uid@$emailDomain"
 
-  Write-Debug "userObj = New-ADUser -Name $name -GivenName $first -Surname $last -DisplayName $display -Path $ou"
-  Write-Debug "  -UserPrincipalName $emailUPN -EmailAddress $emailUPN -PasswordNeverExpires:$true "
-  Write-Debug "  -ErrorVariable userErr -ErrorAction SilentlyContinue"
   try {
-    $userObj = New-ADUser -Name $name -GivenName $first -Surname $last -DisplayName $display -Path $ou `
-      -UserPrincipalName $emailUPN -EmailAddress $emailUPN -PasswordNeverExpires:$true `
-      -ErrorVariable userErr -ErrorAction SilentlyContinue -PassThru
+    $userObj = New-ADUser -SamAccountName $UID -Name "$name" -UserPrincipalName $emailUPN `
+      -GivenName $first -Surname $last -DisplayName $display -EmailAddress $emailUPN `
+      -Path $ou -PasswordNeverExpires:$true -ErrorVariable userErr -ErrorAction SilentlyContinue -PassThru
 
     return $userObj
 
@@ -41,9 +38,9 @@ function newADUser([string]$uid, [string]$first, [string]$last, [string]$display
   # Try creating the user with the fallback user ID
   $emailUPN = "$uid2@$emailDomain"
   try {
-    $userObj = New-ADUser -Name $name -GivenName $first -Surname $last -DisplayName $display -Path $ou `
-      -UserPrincipalName $emailUPN -EmailAddress $emailUPN -PasswordNeverExpires:$true `
-      -ErrorVariable userErr -ErrorAction SilentlyContinue -PassThru
+    $userObj = New-ADUser -SamAccountName $UID2 -Name "$name" -UserPrincipalName $emailUPN `
+      -GivenName $first -Surname $last -DisplayName $display -EmailAddress $emailUPN `
+      -Path $ou -PasswordNeverExpires:$true -ErrorVariable userErr -ErrorAction SilentlyContinue -PassThru
 
     return $userObj
   }
