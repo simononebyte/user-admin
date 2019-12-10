@@ -35,10 +35,28 @@ Param(
   )]
   [ValidateLength(1, 256)]
   [String]$Last,
+  
+  [Parameter(
+    Mandatory = $true,
+    Position = 2,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 256)]
+  [String]$JobTitle,
+  
+  [Parameter(
+    Mandatory = $true,
+    Position = 3,
+    ValueFromPipeline = $True,
+    ValueFromPipelineByPropertyName = $True
+  )]
+  [ValidateLength(1, 3)]
+  [String]$OfficeCode,
 
   [Parameter(
     Mandatory = $False,
-    Position = 2,
+    Position = 4,
     ValueFromPipeline = $True,
     ValueFromPipelineByPropertyName = $True
   )]
@@ -47,42 +65,16 @@ Param(
 
   [Parameter(
     Mandatory = $false,
-    Position = 3,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
-  )]
-  [int]$RDPServer = -1,
-
-  [Parameter(
-    Mandatory = $false,
-    Position = 4,
+    Position = 5,
     ValueFromPipeline = $True,
     ValueFromPipelineByPropertyName = $True
   )]
   [ValidateLength(1, 256)]
   [String]$UserName,
-  
-  [Parameter(
-    Mandatory = $false,
-    Position = 5,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
-  )]
-  [ValidateLength(1, 3)]
-  [String]$OfficeCode,
-  
-  [Parameter(
-    Mandatory = $false,
-    Position = 6,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
-  )]
-  [ValidateLength(1, 256)]
-  [String]$JobTitle,
 
   [Parameter(
     Mandatory = $false,
-    Position = 98,
+    Position = 6,
     ValueFromPipeline = $True,
     ValueFromPipelineByPropertyName = $True
   )]  
@@ -105,24 +97,6 @@ BEGIN {
   # Run one-time set-up tasks here, like defining variables, etc.
   Set-StrictMode -Version Latest
   Write-Verbose -Message "$($MyInvocation.MyCommand.Name): Started."
-
-  # Declare any classes used later in the sript
-  # #########################################################################
-  # Class MyClass {
-  #   [string]$Field1
-
-  #   [int]$Field2
-
-  #   [ValidateSet("Opt1", "Opt2", "Opt3")]
-  #   [string]$Field3
-
-  #   # Constructor
-  #   ProfileFolder($Field1, $Field2, $Field3) {
-  #     $this.$Field1 = $Field1
-  #     $this.$Field2 = $Field2
-  #     $this.$Field3 = $Field3
-  #   }
-  # }
 
   # Declare any supporting functions here
   # #########################################################################
@@ -165,11 +139,6 @@ Process {
     $OU = "N/A - Local account"
   }
 
-  $RDP = "Not Set"
-  if ($RDPServer -ne -1) {
-    $RDP = "RDESKTOP0$($RDPServer) User"
-  }
-
   $OfficeName = "N/A - Local Account"
   if (-not $Local) {
     $Office = checkOfficeCode -officeCode $OfficeCode -config $config
@@ -190,7 +159,6 @@ Process {
   Write-Host "Email Address    : $EmailAddress"
   Write-Host "Org Unit         : $OU"
   Write-Host "Office Name      : $OfficeName"
-  Write-Host "RDP Server Group : $RDP"
   
   $title = "User folders     :"
   foreach ($folder in $config.UserFolders) {
@@ -214,7 +182,7 @@ Process {
     Exit
   }
 
-  Write-Host "Create user"
+  Write-Host "Create user $UID $UID2"
   if ($Local) {
     $userObj = newLocalUser -uid $UID -display $DisplayName -uid2 $UID2
   }
@@ -238,6 +206,22 @@ Process {
 
   if ($config.UserFolders.Length -gt 0) {
     createUserFolders -adUser $userObj -config $config
+  }
+
+  foreach ($groupOU in $config.GroupOUs) {
+    Write-Host
+    Write-Host "Please select which $($groupOu.Name) group to add the user to."
+    Write-Host 
+    $groups = promptGroupsFromOU -OU $groupOU.OU
+    
+    if ($null -ne $groups) {
+      foreach ($group in $groups) {
+        Write-Verbose "Adding $UID to group $($group.Name)"
+        Add-ADGroupMember -Identity $group.SamAccountName -Members $userObj.SamAccountName
+      }
+    } else {
+      Write-Host "No groups selected"
+    }
   }
 }
 

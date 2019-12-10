@@ -34,7 +34,8 @@ function createUserFolders($adUser, $config) {
 
     # Set owner if roaming profile 
     if ($folder.ProfileVersion -like "V*") {
-      setFolderOwner -Folder $path -Domain "$config.Domain" -User "Administrators"
+      # setFolderOwner -Folder $path -Domain "$config.Domain" -User "Administrators"
+      Write-Error "Setting own not supported yet. Please set manually to $($config.Domain)\Administrators"
       Write-verbose "Set owner on roaming profile"
     }
 
