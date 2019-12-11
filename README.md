@@ -1,45 +1,101 @@
 # user-admin
 
-A collection of scripts to automate various user administration task
+A collection of scripts to automate various user administration task. Where possible
+most values should be either calculated or pulled from the configuration file. This 
+includes related objects like folders.
 
-## Top Level Steps
+## Current Features
 
-These are the high level steps required for creating a new user. I will break
-these down into smaller, more targeted scripts.
+* Auto generate user name based on customer policy
+* Auto-fallback to alternative user name in the event of a clash
+* Set the correct user principle name
+* Set the correct email address
+* Set the Job Title
+* Set the office name, address and phone number
+* Append qualifications to DisplayName attribute for inclusion in signatures
+* Create folders used by folder redirects and roaming profiles etc
+* Protect folders from accidental rename, move and delete
+* Prompt for group memberships based on contents of OUs specified in the config file
 
-1.  Load config
-2.  Depending on host check if run as admin
-3.  Confirm user details
-    - First & Last NAme
-    - Email (if different from auto-generated one)
-    - Office
-    - Job Title
-    - Ext
-    - Qualifications
-    - Remote desktop server
-    - Groups (See note 1)
-4.  Pre-flight check to ensure there are no clashes. Fail if found.
-    - Does user exist?
-    - Do home folders exist?
-    - Does email address exist?
-5.  Create the domain account
-6.  Update the office information (User existing set-office script)
-7.  Update display name to append qualifications
-8.  Create user folders and set correct permissions
-9.  Add to mandatory groups
-10. Add to remote desktop group
-11. Generate and set the password
-12. Run AD Sync to get account registered on Office 365
-13. Display account details confirmation. e.g. username and password
-14. Display next steps message e.g.
-    - Log into Office 365 and assign a license
-    - Add to the correct signature group in Office 365
-    - Log into Exclaimer and sync details
+## Future Features
+
+* Set the owner on roaming profile folders
+* Wait for account to sync with Office 365
+  + Set the location correctly
+  + Set the license
+  + Set any group memberships
+* Better vetting of the config file into concrete classes rather than a dynamic object
 
 ## Config File
 
-The following settings are available in the configuration file. These allow
-the sames scripts to run in different environments.
+The following gives and example of a config file. Further details can be found below.
+
+``` json
+{
+    "RequireElevated": "true",
+    "UsernameFormat": "first",
+    "UsernameFallback": "firstl1",
+    "EmailDomain": "onebyte.net",
+    "OrgUnit": "OU=Staff,OU=Company,DC=ad,DC=onebyte,DC=net",
+    "Domain": "AD",
+    "Flags": {
+        "Qualifications": "false",
+        "OfficeAddress": "true",
+        "ADSync": "true",
+        "Exclaimer": "true"
+    },
+    "GroupOUs": [
+        {
+            "Name": "Roles",
+            "OU": "OU=Roles,OU=Company,DC=ad,DC=onebyte,DC=net"
+        },
+        {
+            "Name": "Shared Drives",
+            "OU": "OU=Shared Drives,OU=Company,DC=ad,DC=onebyte,DC=net"
+        }
+    ],
+    "Offices": [
+        {
+            "ShortCode": "ts",
+            "Name": "Technical Services",
+            "Phone": "+44 (0)20 3189 2100",
+            "Street": "St Mark’s Studios, 14 Chillingworth Road",
+            "City": "London",
+            "Postcode": "N7 8QL"
+        },
+        {
+            "ShortCode": "ho",
+            "Name": "Head Office",
+            "Phone": "+44 (0)20 3189 2100",
+            "Street": "The Enterprise Centre, University of East Anglia",
+            "City": "Norwich",
+            "Postcode": "NR4 7TJ"
+        }
+    ],
+    "UserFolders": [
+        {
+            "DisplayName": "Redirected folders",
+            "Path": "\\\\server01\\Folders\\",
+            "Protect": "true",
+            "AdminGroups": [
+                "AD\\Server Admins",
+                "AD\\Domain Admins"
+            ],
+            "ProfileVersion": ""
+        },
+        {
+            "DisplayName": "Roaming Profile",
+            "Path": "\\\\server04\\Profiles\\",
+            "Protect": "true",
+            "AdminGroups": [
+                "AD\\Server Admins",
+                "AD\\Domain Admins"
+            ],
+            "ProfileVersion": "V6"
+        }
+    ]
+}
+```
 
 ## Require Elevated
 
@@ -51,13 +107,7 @@ has Azure AD Sync installed. In most other situations elevation is not needed.
 | --------------- | -------------------------------------------------- |
 | RequireElevated | If true the script will halt unless it is elevated |
 
-### Require Elevated - Example
-
-```json
-"RequireElevated": "true"
-```
-
-## Username Format
+## Username Format / Username Fallback
 
 Each company has a preferred format for their user names. This controls the
 preferred format and also the fallback format in the case of a clash.
@@ -70,47 +120,32 @@ preferred format and also the fallback format in the case of a clash.
 **UsernameFormat:** The format is based on how much of the first and/or
 last name to use. So `first` indicates the full first name should be used and
 `last` indicates the full last name should be used. These can be combined so
-`first.last` would make Simon Buckner become `simon.buckner`. Some companies
+`first.last` would make Simon Buckner become `simon.buckner` . Some companies
 only want an initial from one of the name which can be handled using `fx` or
 `lx` where `x` is the number of characters to use. E.g. `f1last` would create
-a username of `sbuckner`.
+a username of `sbuckner` .
 
 **UsernameFallback:** Uses the same formating as `UsernameFormat` to define
 the username format to use of the one generated by the preferred option is
 already in use by another account.
 
-### Username Format - Example
-
-```json
-"UsernameFormat": "f1last",
-"UsernameFallback" : "f2last"
-```
-
 ## Email Domain
 
 What email domain is to be used.
-
-### Email Domain - Example
-
-```json
-"EmailDomain": "onebyte.net"
-```
 
 ## Organisational Unit
 
 The Active Directory OU where the new user object will be created.
 
-### Organisational Unit - Example
+## Domain
 
-```json
-"OrgUnit": "ou=Staff, ou=Company, dc=onebyte, dc=net"
-```
+This is the old format for the Active Directory domain.
 
 ## Feature Flags
 
 Different companies use differing levels of information in the environments.
 These flags turn various functionality on or off as required. These are all
-boolean flags accepting `true` or `false`.
+boolean flags accepting `true` or `false` .
 
 | Flag           | Description                                              |
 | -------------- | -------------------------------------------------------- |
@@ -119,16 +154,24 @@ boolean flags accepting `true` or `false`.
 | ad_sync        | Should an AD Sync request be submitted                   |
 | exclaimer      | If Exclaimer Signature is used then prompt in next steps |
 
-### Feature Flags - Example
+## Group OUs
 
-```json
-"Flags" : {
-    "Qualifications" : "false",
-    "OfficeAddress" : "true",
-    "ADSync" : "true",
-    "Exclaimer" : "true"
-}
-```
+For each OU specified a menu will be displayed that will allow all selection
+of all groups required for that user account. 
+
+## Offices
+
+If the company uses peoples office address on their accounts then the
+acceptable values are listed here.
+
+| Setting    | Description                                         |
+| ---------- | --------------------------------------------------- |
+| short_code | 2 letter code to select the office by               |
+| name       | The name of the office                              |
+| phone      | The phone number for the office                     |
+| street     | The address of the office, except city and postcode |
+| city       | The town or city                                    |
+| postcode   | The postcode                                        |
 
 ## User Folders
 
@@ -145,78 +188,16 @@ various locations.
 
 **Paths:** When a folder is created, the username of the account being created is used.
 So if the username is just the first name, e.g. Simon then the folder created
-will be `\\server\share\simon`. To keep things neat, the path will be
+will be `\\server\share\simon` . To keep things neat, the path will be
 converted to lower case.
 
 **profile_version:** Windows has several profiles version for roaming profiles. These are denoted
 by append the version number to the filename, for example.
 
-`\\server1\share\simon`
+`\\server1\share\simon` 
 
 Would become.
 
-`\\server1\share\simon.V5`
+`\\server1\share\simon.V5` 
 
 Full details of these versions can be found [here](https://support.microsoft.com/en-gb/help/3056198/roaming-user-profiles-versioning-in-windows-10-and-windows-server).
-
-### User Folders - Example
-
-```json
-"UserFolders": [
-    {
-        "DisplayName": "Home Folder",
-        "Path": "\\\\server1\\share\\",
-        "Protect": "true",
-        "AdminGroups": [
-            "domain\\admin group"
-        ],
-        "ProfileVersion": ""
-    },
-    {
-        "DisplayName": "Roaming Profile",
-        "Path": "\\\\server2\\share\\",
-        "Protect": "true",
-        "AdminGroups": [
-            "domain\\admin group"
-        ],
-        "ProfileVersion": "6"
-    }
-]
-```
-
-## Offices
-
-If the company uses peoples office address on their accounts then the
-acceptable values are listed here.
-
-| Setting    | Description                                         |
-| ---------- | --------------------------------------------------- |
-| short_code | 2 letter code to select the office by               |
-| name       | The name of the office                              |
-| phone      | The phone number for the office                     |
-| street     | The address of the office, except city and postcode |
-| city       | The town or city                                    |
-| postcode   | The postcode                                        |
-
-### Offices - Example
-
-```json
-"Offices": [
-    {
-        "ShortCode": "ho",
-        "Name": "Head OFfice",
-        "Phone": "+44 (0) 1603 516 156",
-        "Street": "17 Palace Street",
-        "City": "Norwich",
-        "Postcode": "NR3 1RT"
-    },
-    {
-        "ShortCode": "lo",
-        "Name": "London Office",
-        "Phone": "+44 (0) 20 3189 2100",
-        "Street": "Unit 27, St Mark’s Studios, 14 Chillingworth Road",
-        "City": "London",
-        "Postcode": "N7 8QL"
-    }
-]
-```
