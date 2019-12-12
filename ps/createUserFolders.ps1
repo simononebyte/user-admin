@@ -26,11 +26,13 @@ function createUserFolders($adUser, $config) {
     Write-Verbose "Created folder $path"
 
     # Protect folder from accidental rename/move/deletion
-    protectFolder -folder $path
-    Write-Verbose "Protected folder for rename/move or delete"
+    if ($folder.Pr -eq $true) {
+      protectFolder -folder $path
+      Write-Verbose "Folder prtected for rename/move or delete"
+    }
 
     setFolderReadWrite -Folder $path -Users $adUser.samAccountName
-    Write-Host "Grant access to user"
+    Write-Host "Set user permissions"
 
     # Set owner if roaming profile 
     if ($folder.ProfileVersion -like "V*") {

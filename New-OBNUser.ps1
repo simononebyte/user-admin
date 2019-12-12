@@ -1,10 +1,40 @@
 <#
 .SYNOPSIS
-  Create a new user.
+Create a new user.
 
 .DESCRIPTION
-  Create a new user and all associated objects like home folders and set
-  relevant other attributes like office address and group memberships.
+Create a new user and all associated objects like home folders and set
+relevant other attributes like office address and group memberships.
+
+.PARAMETER First
+The first name of the person the account is for.
+
+.PARAMETER Last
+The last name of the person the account is for.
+
+.PARAMETER JobTitle
+The Job Title, if supplied, of the person the account is for.
+
+.PARAMETER OfficeCode
+The 2 or 3 letter code that relates to the entry in the config
+file for the office address you want to assign to the user.
+
+.PARAMETER Quals
+Qualifications are appended to the Display Name of the user account. This
+is used by the Exclaimer Signature service to put the qualifications on
+the signature of the person the account is for.
+
+.PARAMETER UserName
+In some cases it might be desireable to override the default user name that 
+is generated, for example if someone has a long name and would prefer an
+abbreviation to be used.
+
+.PARAMETER Local
+This will create the account on the local computer instead of in the domain.
+
+.PARAMETER ConfigPath
+The default configu path is C:\ProgramData\Onebyte\Config.json. This will allow
+an alternative path to be used.
 
 .NOTES
   Authored By: Simon Buckner
@@ -16,13 +46,13 @@
 
 #>
 
-[CmdletBinding(SupportsShouldProcess = $True)]
+[CmdletBinding(SupportsShouldProcess = $False)]
 Param(
   [Parameter(
     Mandatory = $True,
     Position = 0,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 256)]
   [String]$First,
@@ -30,26 +60,26 @@ Param(
   [Parameter(
     Mandatory = $True,
     Position = 1,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 256)]
   [String]$Last,
   
   [Parameter(
-    Mandatory = $true,
+    Mandatory = $false,
     Position = 2,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 256)]
   [String]$JobTitle,
   
   [Parameter(
-    Mandatory = $true,
+    Mandatory = $false,
     Position = 3,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 3)]
   [String]$OfficeCode,
@@ -57,8 +87,8 @@ Param(
   [Parameter(
     Mandatory = $False,
     Position = 4,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 256)]
   [String]$Quals,
@@ -66,8 +96,8 @@ Param(
   [Parameter(
     Mandatory = $false,
     Position = 5,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 256)]
   [String]$UserName,
@@ -75,16 +105,16 @@ Param(
   [Parameter(
     Mandatory = $false,
     Position = 6,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]  
   [switch]$Local,
 
   [Parameter(
     Mandatory = $false,
     Position = 99,
-    ValueFromPipeline = $True,
-    ValueFromPipelineByPropertyName = $True
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
   )]
   [ValidateLength(1, 256)]
   # [String]$ConfigPath="C:\ProgramData\Onebyte\config.json"
@@ -117,6 +147,8 @@ BEGIN {
 
 
 Process {
+  Set-StrictMode -Version Latest
+
   # Place all script elements within the process block to allow processing of
   # pipeline correctly.
 
@@ -171,7 +203,7 @@ Process {
     }
     if ($folder.ProfileVersion -like "V*") {
       $path += ".$($folder.ProfileVersion)"
-  }
+    }
     Write-Host "$title $path"
     $title = "                 :"
   }
@@ -222,11 +254,12 @@ Process {
     
     if ($null -ne $groups) {
       foreach ($group in $groups) {
-        Write-Verbose "Adding $UID to group $($group.Name)"
         Add-ADGroupMember -Identity $group.SamAccountName -Members $userObj.SamAccountName
+        Write-Verbose "Add $UID to group $($group.Name) complete"
       }
-    } else {
-      Write-Host "No groups selected"
+    }
+    else {
+      Write-Host "No $($groupOU.Name) groups selected"
     }
   }
 }
