@@ -26,7 +26,7 @@ function createUserFolders($adUser, $config) {
     Write-Verbose "Created folder $path"
 
     # Protect folder from accidental rename/move/deletion
-    if ($folder.Pr -eq $true) {
+    if ($folder.Protect -eq $true) {
       protectFolder -folder $path
       Write-Verbose "Folder prtected for rename/move or delete"
     }
@@ -37,8 +37,7 @@ function createUserFolders($adUser, $config) {
     # Set owner if roaming profile 
     if ($folder.ProfileVersion -like "V*") {
       # TODO: Set the profile attribute on the user account
-      # TODO: Fix the SetOwner script
-      # setFolderOwner -Folder $path -Domain "$config.Domain" -User "Administrators"
+      setFolderOwner -Folder $path -Domain "$config.Domain" -User "Administrators"
       Write-Error "Setting own not supported yet. Please set manually to $($config.Domain)\Administrators"
       Write-verbose "Set owner on roaming profile"
     }

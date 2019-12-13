@@ -176,7 +176,12 @@ acceptable values are listed here.
 ## User Folders
 
 When creating a user it may be required to produce one or more folders in
-various locations.
+various locations. 
+
+**Note** When creating roaming profile directories, either the user or the Administrators group
+needs to be the owner of the folder. If not, the roaming profile will fail to roam. Due to a
+strange bug in how PowerShell interacts with the .Net framework, the folder must be specified
+as a UNC path and not a local path. E.g, `\\server\share\folder` and not `C:\Folder`
 
 | Setting         | Description                                           |
 | --------------- | ----------------------------------------------------- |
@@ -199,5 +204,6 @@ by append the version number to the filename, for example.
 Would become.
 
 `\\server1\share\simon.V5` 
+
 
 Full details of these versions can be found [here](https://support.microsoft.com/en-gb/help/3056198/roaming-user-profiles-versioning-in-windows-10-and-windows-server).
