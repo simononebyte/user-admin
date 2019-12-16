@@ -14,12 +14,16 @@ includes related objects like folders.
 * Set the office name, address and phone number
 * Append qualifications to DisplayName attribute for inclusion in signatures
 * Create folders used by folder redirects and roaming profiles etc
+  + Sets Administrators as the owner of a roaming profile to ensure it is accessible correctly
 * Protect folders from accidental rename, move and delete
 * Prompt for group memberships based on contents of OUs specified in the config file
+* Sets the password for the account in a similar style to Office 365 passwords
+* Enables the created account
+* Places the password in the clipboard
 
 ## Future Features
 
-* Set the owner on roaming profile folders
+* Initiates Azure AD sync
 * Wait for account to sync with Office 365
   + Set the location correctly
   + Set the license
@@ -40,9 +44,7 @@ The following gives and example of a config file. Further details can be found b
     "Domain": "AD",
     "Flags": {
         "Qualifications": "false",
-        "OfficeAddress": "true",
-        "ADSync": "true",
-        "Exclaimer": "true"
+        "OfficeAddress": "true"
     },
     "GroupOUs": [
         {
@@ -151,13 +153,11 @@ boolean flags accepting `true` or `false` .
 | -------------- | -------------------------------------------------------- |
 | qualifications | Appends professional qualifications to the display name  |
 | office_address | Add predefined office address details to the account     |
-| ad_sync        | Should an AD Sync request be submitted                   |
-| exclaimer      | If Exclaimer Signature is used then prompt in next steps |
 
 ## Group OUs
 
 For each OU specified a menu will be displayed that will allow all selection
-of all groups required for that user account. 
+of all groups required for that user account.
 
 ## Offices
 
@@ -176,12 +176,12 @@ acceptable values are listed here.
 ## User Folders
 
 When creating a user it may be required to produce one or more folders in
-various locations. 
+various locations.
 
 **Note** When creating roaming profile directories, either the user or the Administrators group
 needs to be the owner of the folder. If not, the roaming profile will fail to roam. Due to a
-strange bug in how PowerShell interacts with the .Net framework, the folder must be specified
-as a UNC path and not a local path. E.g, `\\server\share\folder` and not `C:\Folder`
+strange bug in how PowerShell interacts with the . Net framework, the folder must be specified
+as a UNC path and not a local path. E.g, `\\server\share\folder` and not `C:\Folder` 
 
 | Setting         | Description                                           |
 | --------------- | ----------------------------------------------------- |
@@ -205,5 +205,5 @@ Would become.
 
 `\\server1\share\simon.V5` 
 
-
 Full details of these versions can be found [here](https://support.microsoft.com/en-gb/help/3056198/roaming-user-profiles-versioning-in-windows-10-and-windows-server).
+
