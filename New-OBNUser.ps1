@@ -191,9 +191,9 @@ Process {
     $OU = "N/A - Local account"
   }
 
-  $OfficeName = "N/A - Local Account"
-  $OfficePhone = "N/A - Local Account"
-  if (-not $Local) {
+  $OfficeName = ""
+  $OfficePhone = ""
+  if (-not $Local -and $config.Flags.OfficeAddress -eq $true) {
     $Office = checkOfficeCode -officeCode $OfficeCode -config $config
     $OfficeName = $Office.Name
     if (-not $Office) {
@@ -258,11 +258,11 @@ Process {
     exit
   }
 
-  if (-not $Local) {
+  if (-not $Local -and $JobTitle -ne "") {
     setJobTitle -adUser $userObj -title $JobTitle
   }
 
-  if (-not $Local) {
+  if (-not $Local -and $Department -ne "") {
     setDepartment -adUser $userObj -department $Department
   }
 
@@ -300,7 +300,7 @@ Process {
   $pwd | clip
 
   $userObj | Set-ADUser -Enabled:$true
-  Write-Verboe "User account enabled"
+  Write-Verbose "User account enabled"
 }
 
 END {       

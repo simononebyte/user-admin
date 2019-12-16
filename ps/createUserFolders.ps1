@@ -6,6 +6,8 @@ function createUserFolders($adUser, $config) {
   $NTAccount = New-Object System.Security.Principal.NTAccount("$($config.Domain)\$($adUser.SamAccountName)")
   $UID = $adUser.SamAccountName
   
+  Write-Verbose "Setting folders for user $NTAccount"
+  
   foreach ($folder in $config.UserFolders) {
     $path = $folder.Path
     if ($path -match "\\$") {
@@ -23,7 +25,7 @@ function createUserFolders($adUser, $config) {
     New-Item -Path $path -ItemType Directory -ErrorVariable dirErr -ErrorAction SilentlyContinue | Out-Null
 
     if ($dirErr -and $dirErr[0].FullyQualifiedErrorId -like "DirectoryExist*") {
-      Write-Error $dirErr
+      Write-Error $dirErr[0]
       exit
     }
     Write-Verbose "Created folder $path"
