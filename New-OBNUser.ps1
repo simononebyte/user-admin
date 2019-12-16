@@ -1,4 +1,5 @@
 <#
+
 .SYNOPSIS
 Create a new user.
 
@@ -14,6 +15,9 @@ The last name of the person the account is for.
 
 .PARAMETER JobTitle
 The Job Title, if supplied, of the person the account is for.
+
+.PARAMETER Department
+The name of the department to assign the user to.
 
 .PARAMETER OfficeCode
 The 2 or 3 letter code that relates to the entry in the config
@@ -36,10 +40,16 @@ This will create the account on the local computer instead of in the domain.
 The default configu path is C:\ProgramData\Onebyte\Config.json. This will allow
 an alternative path to be used.
 
+.INPUTS
+This script does not accept input from the Pipeline.
+
+.OUTPUTS
+The password for the user that is created will be copied to the clipboard.
+
 .NOTES
-Authored By: Simon Buckner
-Email: simon@onebyte.net
-Date: 16th December 2019
+Author : Simon Buckner
+Email  : simon@onebyte.net
+Date   : 16th December 2019
 
 .LINK
 Internal documentation: https://onebyte.eu.itglue.com/269174305390819/docs/1417313002815653
