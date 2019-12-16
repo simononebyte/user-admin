@@ -46,9 +46,6 @@ an alternative path to be used.
 
 #>
 
-
-# TODO: Add department
-
 [CmdletBinding(SupportsShouldProcess = $False)]
 Param(
   [Parameter(
@@ -202,6 +199,7 @@ Process {
   Write-Host
   Write-Host "Display Name     : $DisplayName"
   Write-Host "Job Title        : $JobTitle"
+  Write-host "Department       : $Department"
   Write-Host
   Write-Host "Office Name      : $OfficeName"
   Write-Host "Office Phone     : $OfficePhone"
@@ -251,6 +249,10 @@ Process {
 
   if (-not $Local) {
     setJobTitle -adUser $userObj -title $JobTitle
+  }
+
+  if (-not $Local) {
+    setDepartment -adUser $userObj -department $Department
   }
 
   if (-not $Local -and $OfficeCode) {
