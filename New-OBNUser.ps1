@@ -37,12 +37,13 @@ The default configu path is C:\ProgramData\Onebyte\Config.json. This will allow
 an alternative path to be used.
 
 .NOTES
-  Authored By: Simon Buckner
-  Email: simon@onebyte.net
-  Date: 3rd November 2019
+Authored By: Simon Buckner
+Email: simon@onebyte.net
+Date: 16th December 2019
 
 .LINK
-  <link to any documentation relating to this script in IT Glue>
+Internal documentation: https://onebyte.eu.itglue.com/269174305390819/docs/1417313002815653
+Github Repository: https://github.com/simononebyte/user-admin
 
 #>
 
