@@ -46,6 +46,9 @@ an alternative path to be used.
 
 #>
 
+
+# TODO: Add department
+
 [CmdletBinding(SupportsShouldProcess = $False)]
 Param(
   [Parameter(
@@ -81,12 +84,21 @@ Param(
     ValueFromPipeline = $False,
     ValueFromPipelineByPropertyName = $False
   )]
+  [ValidateLength(1, 256)]
+  [String]$Department,
+  
+  [Parameter(
+    Mandatory = $false,
+    Position = 4,
+    ValueFromPipeline = $False,
+    ValueFromPipelineByPropertyName = $False
+  )]
   [ValidateLength(1, 3)]
   [String]$OfficeCode,
 
   [Parameter(
     Mandatory = $False,
-    Position = 4,
+    Position = 5,
     ValueFromPipeline = $False,
     ValueFromPipelineByPropertyName = $False
   )]
@@ -95,7 +107,7 @@ Param(
 
   [Parameter(
     Mandatory = $false,
-    Position = 5,
+    Position = 6,
     ValueFromPipeline = $False,
     ValueFromPipelineByPropertyName = $False
   )]
@@ -104,7 +116,7 @@ Param(
 
   [Parameter(
     Mandatory = $false,
-    Position = 6,
+    Position = 7,
     ValueFromPipeline = $False,
     ValueFromPipelineByPropertyName = $False
   )]  
@@ -172,6 +184,7 @@ Process {
   }
 
   $OfficeName = "N/A - Local Account"
+  $OfficePhone = "N/A - Local Account"
   if (-not $Local) {
     $Office = checkOfficeCode -officeCode $OfficeCode -config $config
     $OfficeName = $Office.Name
@@ -179,18 +192,22 @@ Process {
       Write-Error "Unable to find that Office"
       exit
     }
+    $OfficePhone = $Office.Phone
   }
 
   Write-Host "Creating a new account with the following details"
   Write-Host
   Write-Host "First name       : $First"
   Write-Host "Last name        : $Last"
+  Write-Host
   Write-Host "Display Name     : $DisplayName"
   Write-Host "Job Title        : $JobTitle"
+  Write-Host
+  Write-Host "Office Name      : $OfficeName"
+  Write-Host "Office Phone     : $OfficePhone"
+  Write-Host
   Write-Host "User lgoin       : $UID" 
   Write-Host "Email Address    : $EmailAddress"
-  Write-Host "Org Unit         : $OU"
-  Write-Host "Office Name      : $OfficeName"
   
   $title = "User folders     :"
   foreach ($folder in $config.UserFolders) {
@@ -214,18 +231,16 @@ Process {
     Exit
   }
 
-  Write-Host "Create user $UID $UID2"
-  if ($Local) {
+    if ($Local) {
     $userObj = newLocalUser -uid $UID -display $DisplayName -uid2 $UID2
     if ($userObj.Name -ne $UID) {
       $UID = $userObj.Name
     }
   }
   else {
+    Write-Verbose "newADUser -uid $UID -first $First -last $Last -display '$DisplayName' -emailDomain $EmailDomain -ou $OU -uid2 $UID2"
     $userObj = newADUser -uid $UID -first $First -last $Last -display "$DisplayName" -emailDomain $EmailDomain -ou $OU -uid2 $UID2
-    if ($userObj.SamAccountName -ne $UID) {
-      $UID = $userObj.Name
-    }
+    $UID = $userObj.Name
   }
   
   # Not sure this is needed but there as a belt and braces check
@@ -262,6 +277,17 @@ Process {
       Write-Host "No $($groupOU.Name) groups selected"
     }
   }
+  
+  $pwd = newPassword
+  $sec = ConvertTo-SecureString -AsPlainText $pwd -Force
+  $userObj | Set-ADAccountPassword -Reset -NewPassword $sec
+  Write-Host
+  Write-Host "Password set to '$pwd' and copied to clipboard"
+  Write-Host
+  $pwd | clip
+
+  $userObj | Set-ADUser -Enabled:$true
+  Write-Verboe "User account enabled"
 }
 
 END {       

@@ -3,6 +3,9 @@
 
 function createUserFolders($adUser, $config) {
 
+  $NTAccount = New-Object System.Security.Principal.NTAccount("$($config.Domain)\$($adUser.SamAccountName)")
+  $UID = $adUser.SamAccountName
+  
   foreach ($folder in $config.UserFolders) {
     $path = $folder.Path
     if ($path -match "\\$") {
@@ -17,7 +20,7 @@ function createUserFolders($adUser, $config) {
         
     Write-Host "Creating $path"
         
-    New-Item -Path $path -ItemType Directory -ErrorVariable dirErr -ErrorAction SilentlyContinue
+    New-Item -Path $path -ItemType Directory -ErrorVariable dirErr -ErrorAction SilentlyContinue | Out-Null
 
     if ($dirErr -and $dirErr[0].FullyQualifiedErrorId -like "DirectoryExist*") {
       Write-Error $dirErr
@@ -31,14 +34,13 @@ function createUserFolders($adUser, $config) {
       Write-Verbose "Folder prtected for rename/move or delete"
     }
 
-    setFolderReadWrite -Folder $path -Users $adUser.samAccountName
+    setFolderReadWrite -Folder $path -Users $NTAccount
     Write-Host "Set user permissions"
 
     # Set owner if roaming profile 
     if ($folder.ProfileVersion -like "V*") {
       # TODO: Set the profile attribute on the user account
       setFolderOwner -Folder $path -Domain "$config.Domain" -User "Administrators"
-      Write-Error "Setting own not supported yet. Please set manually to $($config.Domain)\Administrators"
       Write-verbose "Set owner on roaming profile"
     }
 

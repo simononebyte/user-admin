@@ -16,15 +16,14 @@ function promptGroupsFromOU([string]$OU) {
     Write-Host "Enter selection, multiple values separated by commas. Us - to indicate ranges."
     $selections = Read-Host "(E.g. 1,4,6-9) or 0 for none"
 
-    if ($selections -eq "" -or $selections -eq "0") {
-        $null
-        Exit
-    }
-
-    $selected = parseSelection -selections $selections
     $selGroups = @()
-    foreach ($sel in $selected) {
-        $selGroups += $groups[$sel-1]
+
+    if ($selections -ne "" -and $selections -ne "0") {
+        $selected = parseSelection -selections $selections
+        $selGroups = @()
+        foreach ($sel in $selected) {
+            $selGroups += $groups[$sel-1]
+        }
     }
     
     $selGroups

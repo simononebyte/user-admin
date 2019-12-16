@@ -2,7 +2,7 @@
 # Create a new AD user
 
 function newADUser([string]$uid, [string]$first, [string]$last, [string]$display, [string]$emailDomain, [string]$ou, [string]$uid2) {
-  Write-Debug $emailDomain
+  
   $upnClashError = "ActiveDirectoryServer:8648,Microsoft.ActiveDirectory.Management.Commands.NewADUser"
 
   $name = "$first $last"

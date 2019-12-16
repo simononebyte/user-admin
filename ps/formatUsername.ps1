@@ -3,8 +3,6 @@
 
 function formatUsername([string]$First, [string]$Last, [string]$Format) {
 
-    Write-Verbose "Generating user name for : $First $Last"
-
     $p1 = ""
     $p2 = ""
 
@@ -54,5 +52,8 @@ function formatUsername([string]$First, [string]$Last, [string]$Format) {
     }
 
     ## Return value to calling script
-    "$($p1.ToLower())$($p2.ToLower())"
+    $uid = "$($p1.ToLower())$($p2.ToLower())"
+
+    Write-Verbose "Generated user name '$uid' using format '$Format'"
+    $uid
 }
