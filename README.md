@@ -58,7 +58,7 @@ The following gives and example of a config file. Further details can be found b
     ],
     "Offices": [
         {
-            "ShortCode": "ts",
+            "OfficeCode": "ts",
             "Name": "Technical Services",
             "Phone": "+44 (0)20 3189 2100",
             "Street": "St Mark’s Studios, 14 Chillingworth Road",
@@ -66,7 +66,7 @@ The following gives and example of a config file. Further details can be found b
             "Postcode": "N7 8QL"
         },
         {
-            "ShortCode": "ho",
+            "OfficeCode": "ho",
             "Name": "Head Office",
             "Phone": "+44 (0)20 3189 2100",
             "Street": "The Enterprise Centre, University of East Anglia",

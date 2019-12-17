@@ -2,7 +2,7 @@
 
 # Represent the information that can be configured for an office address
 Class Office {
-    [string]$ShortCode
+    [string]$OfficeCode
     [string]$Name
     [string]$Phone
     [string]$Street

@@ -1,7 +1,7 @@
 # File to be dot sourced by main scripts
-# Sets office name and address details using presets
+# Gets the Office details from the config file
 
-function checkOfficeCode([string]$officeCode, $config) {
+function getOffices($config) {
 
     $offices = @()
     foreach ($officeJson in $config.Offices) {
@@ -14,16 +14,8 @@ function checkOfficeCode([string]$officeCode, $config) {
         $newOffice.Postcode = $officeJson.Postcode
         $offices += $newOffice
     }
-    
-    $office = $null
-    foreach ($o in $offices) {
-        if ($o.OfficeCode -eq $OfficeCode) {
-            $office = $o
-            break
-        }
-    }
  
+    Write-Verbose "$($offices.Length) found in config"
     # Return the office if found, NULL if not
-    Write-Host "Office found -eq $office"
-    $office
+    $offices
 }
