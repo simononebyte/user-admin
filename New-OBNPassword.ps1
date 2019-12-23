@@ -14,7 +14,7 @@ Generates a new password and places it in the clipboard
 
 .NOTES
 Author : Simon Buckner
-Email  : simonbuckner@hotmail.com
+Email  : simon@onebyte.net
 Date   : 20th December 2019
 
 .INPUTS

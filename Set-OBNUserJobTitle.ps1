@@ -29,7 +29,7 @@ Set the job title to 'Procurement Manager' for all users in the AD.
 
 .NOTES
 Author : Simon Buckner
-Email  : simonbuckner@hotmail.com
+Email  : simon@onebyte.net
 Date   : 17th December 2019
 
 .INPUTS

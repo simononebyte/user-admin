@@ -12,3 +12,16 @@ Class Office {
     # Constructor
     Office() { }
 }
+
+Class OBNUser {
+    [string]$FirstName
+    [string]$LastName
+    [string]$DisplayName
+    [string]$Qualifications
+    [string]$Email
+    [string[]]$EmailAliases
+    [string]$SAMAccount
+    [string]$UPN
+    [switch]$Cloud
+    [switch]$OnPremise
+}
