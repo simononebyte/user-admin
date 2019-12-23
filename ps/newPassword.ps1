@@ -15,7 +15,7 @@ function newPassword() {
         "wop", "kik", "mic", "mik", "miq", "guc", "guk", "guq", "giz", "sex", "wac", `
         "wak", "waq", "pot", "vaj", "nut", "poo", "muf", "tok", "toc", "toq", "rac", `
         "rak", "raq", "sac", "sak", "saq", "nad", "sol", "sob", "fob", "bum", "lab", `
-        "con", "lib" `
+        "con", "lib", "cuk" `
     )
 
     do {
