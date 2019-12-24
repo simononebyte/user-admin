@@ -5,7 +5,7 @@ function getOffices($config) {
 
     $offices = @()
     foreach ($officeJson in $config.Offices) {
-        $newOffice = [Office]::New()
+        $newOffice = [OBNOffice]::New()
         $newOffice.OfficeCode = $officeJson.OfficeCode
         $newOffice.Name = $officeJson.Name
         $newOffice.Phone = $officeJson.Phone

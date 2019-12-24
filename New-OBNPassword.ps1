@@ -39,9 +39,13 @@ BEGIN {
   # #########################################################################
   # Dot source all necessary scripts
   $Path = ".\ps\"
-  Get-ChildItem -Path $Path -Filter *.ps1 | ForEach-Object {
-    . $_.FullName
+  Get-ChildItem -Path $Path -Filter "*.ps1" | ForEach-Object {
+    if ( $_.Name -notlike "*.ps1xml") {
+      Write-Verbose "dot Sourcing $($_.Fullname)"
+      . $_.FullName
+    }
   }
+
 
 }
 

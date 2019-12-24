@@ -1,7 +1,7 @@
 # File to be dot sourced by main scripts
 # Sets office name and address details using presets
 
-function setOffice($adUser, [Office]$office) {
+function setOffice($adUser, [OBNOffice]$office) {
 
     # Setting Office information
     if ($adUser) {

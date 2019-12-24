@@ -20,7 +20,7 @@ Date   : 17th December 2019
 None
 
 .OUTPUTS
-Array of type [Office]
+Array of type [Onebyte.Office]
 
 .LINK
 Internal documentation: 
@@ -51,9 +51,13 @@ BEGIN {
   # #########################################################################
   # Dot source all necessary scripts
   $Path = ".\ps\"
-  Get-ChildItem -Path $Path -Filter *.ps1 | ForEach-Object {
-    . $_.FullName
+  Get-ChildItem -Path $Path -Filter "*.ps1" | ForEach-Object {
+    if ( $_.Name -notlike "*.ps1xml") {
+      Write-Verbose "dot Sourcing $($_.Fullname)"
+      . $_.FullName
+    }
   }
+
  
   $config = loadConfig -Path $ConfigPath
 }

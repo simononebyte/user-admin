@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+format type data generated 12/23/2019 20:40:03 by SIMON-LAPTOP\simon
+-->
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <!--Created 12/23/2019 20:40:03 by SIMON-LAPTOP\simon-->
+      <Name>default</Name>
+      <ViewSelectedBy>
+        <TypeName>Onebyte.User</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <!--Delete the AutoSize node if you want to use the defined widths.-->
+        <AutoSize />
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>IsEnabled</Label>
+            <Width>10</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>FirstName</Label>
+            <Width>12</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>LastName</Label>
+            <Width>11</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>DisplayName</Label>
+            <Width>14</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Email</Label>
+            <Width>34</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>EmailAliases</Label>
+            <Width>18</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>SAMAccount</Label>
+            <Width>13</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>UPN</Label>
+            <Width>34</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IsCloud</Label>
+            <Width>8</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IsOnPremise</Label>
+            <Width>12</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Server</Label>
+            <Width>9</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <!--
+            By default the entries use property names, but you can replace them with scriptblocks.
+            <ScriptBlock>$_.foo /1mb -as [int]</ScriptBlock>
+-->
+              <TableColumnItem>
+                <PropertyName>IsEnabled</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>FirstName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>LastName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DisplayName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Email</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>EmailAliases</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>SAMAccount</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>UPN</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>IsCloud</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>IsOnPremise</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Server</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
