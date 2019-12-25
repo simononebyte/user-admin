@@ -151,12 +151,7 @@ BEGIN {
   # Declare any supporting functions here
   # #########################################################################
   # Dot source all necessary scripts
-  Get-ChildItem -Path $Path -Filter "*.ps1" | ForEach-Object {
-    if ( $_.Name -notlike "*.ps1xml") {
-      Write-Verbose "dot Sourcing $($_.Fullname)"
-      . $_.FullName
-    }
-  }
+  .\ps\importScripts.ps1 -path ".\ps\"
 
  
   $config = loadConfig -Path $ConfigPath
